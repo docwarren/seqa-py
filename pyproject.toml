@@ -4,11 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "seqa-py"
-<<<<<<< Updated upstream
-version = "0.1.0"
-=======
 dynamic = ["version"]
->>>>>>> Stashed changes
 description = "Python library for querying genomic files across cloud and local storage"
 requires-python = ">=3.12"
 dependencies = [
