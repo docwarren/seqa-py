@@ -9,8 +9,8 @@ Requires [uv](https://docs.astral.sh/uv/) and a Rust toolchain (rustup).
 ```bash
 git clone <repo>
 cd seqa_py
-uv sync --all-groups     # install runtime + dev dependencies (pytest, ruff, maturin)
 uv run maturin develop   # compile the Rust extension
+uv sync --all-groups     # install runtime + dev dependencies (pytest, ruff, maturin)
 ```
 
 After any change to `src/lib.rs`, re-run `maturin develop`.
@@ -265,8 +265,8 @@ Copy `.env.example` to `.env` and fill in the values.
 ## Development
 
 ```bash
-uv sync --all-groups            # install dev dependencies (first time, or after pulling)
 uv run maturin develop          # rebuild Rust extension
+uv sync --all-groups            # restore dev dependencies (maturin develop resets the venv)
 uv run pytest                   # all tests
 uv run pytest tests/test_local.py -v    # local tests only (no cloud creds needed)
 uv run ruff check .             # lint
