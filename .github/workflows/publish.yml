@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   build-linux:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.target == 'aarch64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     strategy:
       matrix:
         target: [x86_64, aarch64]
@@ -21,8 +21,6 @@ jobs:
           target: ${{ matrix.target }}
           args: --release --out dist
           manylinux: auto
-          before-script-linux: |
-            yum install -y binutils-aarch64-linux-gnu 2>/dev/null || true
       - uses: actions/upload-artifact@v4
         with:
           name: wheels-linux-${{ matrix.target }}
