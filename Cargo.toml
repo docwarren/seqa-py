@@ -1,6 +1,6 @@
 [package]
 name = "seqa_py"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 
 [lib]
@@ -8,6 +8,6 @@ name = "_seqa_py"
 crate-type = ["cdylib"]
 
 [dependencies]
-pyo3 = { version = "0.22", features = ["extension-module"] }
-seqa_core = "1.0.0"
+pyo3 = { version = "0.22", features = ["extension-module", "abi3-py38"] }
+seqa_core = "1.1.1"
 tokio = { version = "1", features = ["rt", "rt-multi-thread"] }
