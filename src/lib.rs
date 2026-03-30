@@ -71,6 +71,7 @@ fn query_file(
         tabix_index: None,
         tabix_header: None,
         fasta_index: None,
+        no_cache: false,
     };
 
     py.allow_threads(|| -> Result<Vec<String>, String> {

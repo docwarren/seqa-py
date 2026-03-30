@@ -1237,9 +1237,9 @@ dependencies = [
 
 [[package]]
 name = "seqa_core"
-version = "1.1.1"
+version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "513f0f16bc6c7f9f615aa27ae2f30ab20a0c75a1be417a8c97ea2691e0da00eb"
+checksum = "43887b53c52ee9073e4bb40ced1527ff7139dc3e2180639f21d8a231b6a60410"
 dependencies = [
  "flate2",
  "futures",
@@ -1253,7 +1253,7 @@ dependencies = [
 
 [[package]]
 name = "seqa_py"
-version = "0.1.1"
+version = "0.2.1"
 dependencies = [
  "pyo3",
  "seqa_core",
