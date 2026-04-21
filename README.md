@@ -1,6 +1,6 @@
 # seqa_py
 
-Python library for querying genomic files (BAM, VCF, BED, BigWig, BigBed, FASTA, GFF, GTF) across local and cloud storage. Built on [seqa_core](../seqa-rs/seqa_core) via PyO3.
+Python library for querying genomic files (BAM, VCF, BED, BigWig, BigBed, FASTA, GFF, GTF) across local and cloud storage. Built on [seqa_core](https://crates.io/crates/seqa_core) via PyO3.
 
 ## Installation
 
