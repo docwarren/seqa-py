@@ -34,7 +34,7 @@ All genomic formats preserve their native coordinates. Internal canonical format
 ### Extension Layout
 
 - `src/lib.rs` — PyO3 bindings; compiled to `_seqa_py.so` via maturin.
-- `seqa_py/__init__.py` — Python wrapper; imports `query_file` from `._seqa_py` (relative). The `module-name = "seqa_py._seqa_py"` setting in `pyproject.toml` ensures maturin installs the extension inside the `seqa_py` package and creates a `seqa_py.pth` editable pointer.
+- `seqa_py/__init__.py` — Python wrapper; imports `file_search` from `._seqa_py` (relative). The `module-name = "seqa_py._seqa_py"` setting in `pyproject.toml` ensures maturin installs the extension inside the `seqa_py` package and creates a `seqa_py.pth` editable pointer.
 - `seqa_core` is referenced via local path `../seqa-rs/seqa_core` in `Cargo.toml`.
 
 ### Storage Layer

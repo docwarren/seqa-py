@@ -5,10 +5,10 @@ use seqa_core::api::bigbed_search::bigbed_search;
 use seqa_core::api::bigwig_search::bigwig_search;
 use seqa_core::api::fasta_search::fasta_search;
 use seqa_core::api::output_format::OutputFormat;
-use seqa_core::api::search_options::{CigarFormat, SearchOptions};
+use seqa_core::api::search_options::SearchOptions;
 use seqa_core::api::tabix_search::tabix_search;
 use seqa_core::stores::StoreService;
-use seqa_core::utils::{format_file_path, get_index_path, get_output_format, parse_coordinates};
+use seqa_core::utils::{format_file_path, get_output_format, parse_coordinates};
 
 /// Query a genomic file and return matching lines as a list of tab-delimited strings.
 ///
@@ -33,7 +33,7 @@ use seqa_core::utils::{format_file_path, get_index_path, get_output_format, pars
 ///     ValueError: If the file path, format, or coordinates are invalid, or the search fails.
 #[pyfunction]
 #[pyo3(signature = (file_path, coordinates, include_header=true, header_only=false, genome=None))]
-fn query_file(
+fn file_search(
     py: Python<'_>,
     file_path: String,
     coordinates: String,
@@ -41,38 +41,23 @@ fn query_file(
     header_only: bool,
     genome: Option<String>,
 ) -> PyResult<Vec<String>> {
+    // SearchOptions::new swallows parse/format errors with .unwrap_or — validate
+    // upfront so callers still get ValueError on bad paths/extensions/coordinates.
     let normalized_path = format_file_path(&file_path)
         .map_err(|e| PyValueError::new_err(e.to_string()))?;
-
-    let format = get_output_format(&normalized_path)
+    get_output_format(&normalized_path)
+        .map_err(|e| PyValueError::new_err(e.to_string()))?;
+    parse_coordinates(&coordinates)
         .map_err(|e| PyValueError::new_err(e.to_string()))?;
 
-    let index_path = get_index_path(&normalized_path)
-        .map_err(|e| PyValueError::new_err(e.to_string()))?;
+    let mut options = SearchOptions::new(&file_path, &coordinates);
+    options.include_header = include_header;
+    options.header_only = header_only;
+    if let Some(g) = genome {
+        options.genome = Some(g.to_lowercase());
+    }
 
-    let (chromosome, begin, end) = parse_coordinates(&coordinates)
-        .map_err(|e| PyValueError::new_err(e.to_string()))?;
-
-    let options = SearchOptions {
-        file_path: normalized_path,
-        index_path,
-        chromosome,
-        begin,
-        end,
-        genome: genome.map(|g| g.to_lowercase()),
-        output_format: format.clone(),
-        include_header,
-        header_only,
-        cigar_format: CigarFormat::Standard,
-        bigwig_index: None,
-        bigbed_index: None,
-        bam_index: None,
-        bam_header: None,
-        tabix_index: None,
-        tabix_header: None,
-        fasta_index: None,
-        no_cache: false,
-    };
+    let format = options.output_format.clone();
 
     py.allow_threads(|| -> Result<Vec<String>, String> {
         let rt = tokio::runtime::Builder::new_current_thread()
@@ -92,7 +77,7 @@ fn query_file(
 
         Ok(result.lines)
     })
-    .map_err(|e| PyValueError::new_err(e))
+    .map_err(PyValueError::new_err)
 }
 
 /// List objects at a cloud or local directory URI.
@@ -139,7 +124,7 @@ fn list_dir(py: Python<'_>, dir_path: String) -> PyResult<Vec<(String, String, u
 
 #[pymodule]
 fn _seqa_py(m: &Bound<'_, PyModule>) -> PyResult<()> {
-    m.add_function(wrap_pyfunction!(query_file, m)?)?;
+    m.add_function(wrap_pyfunction!(file_search, m)?)?;
     m.add_function(wrap_pyfunction!(list_dir, m)?)?;
     Ok(())
 }

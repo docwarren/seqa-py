@@ -3,7 +3,7 @@
 import os
 import pytest
 
-from seqa_py import query_file
+from seqa_py import file_search
 
 has_aws = pytest.mark.skipif(
     not os.getenv("AWS_ACCESS_KEY_ID"), reason="AWS credentials not set"
@@ -28,24 +28,24 @@ HTTP_VCF = "https://s3.us-west-1.amazonaws.com/com.gmail.docarw/test_data/NA1287
 class TestS3Vcf:
     @has_aws
     def test_chr1_small_region(self):
-        lines = query_file(S3_VCF, "chr1:1-500000", include_header=False)
+        lines = file_search(S3_VCF, "chr1:1-500000", include_header=False)
         assert len(lines) == 14
         assert lines[0].startswith("chr1\t116549\t")
 
     @has_aws
     def test_chr12(self):
-        lines = query_file(S3_VCF, "chr12:1-120000", include_header=False)
+        lines = file_search(S3_VCF, "chr12:1-120000", include_header=False)
         assert len(lines) == 3
         assert lines[0].startswith("chr12\t86886\t")
 
     @has_aws
     def test_large_region(self):
-        lines = query_file(S3_VCF, "chr1:100000000-200000000", include_header=False)
+        lines = file_search(S3_VCF, "chr1:100000000-200000000", include_header=False)
         assert len(lines) == 112930
 
     @has_aws
     def test_cnv_vcf_chr12(self):
-        lines = query_file(S3_CNV_VCF, "chr12:1-100000000", include_header=False)
+        lines = file_search(S3_CNV_VCF, "chr12:1-100000000", include_header=False)
         assert len(lines) == 250
         assert lines[0].startswith("chr12\t16000\tNA12878_DUP_chr12_1")
 
@@ -53,7 +53,7 @@ class TestS3Vcf:
 class TestS3Bam:
     @has_aws
     def test_bam_search(self):
-        lines = query_file(S3_BAM, "chr12:10000000-10000100", include_header=False)
+        lines = file_search(S3_BAM, "chr12:10000000-10000100", include_header=False)
         assert isinstance(lines, list)
         assert len(lines) > 0
         for line in lines:
@@ -63,7 +63,7 @@ class TestS3Bam:
 class TestS3BigWig:
     @has_aws
     def test_bigwig_search(self):
-        lines = query_file(S3_BIGWIG, "chr4:120000000-140000000", include_header=False)
+        lines = file_search(S3_BIGWIG, "chr4:120000000-140000000", include_header=False)
         assert isinstance(lines, list)
         assert len(lines) > 0
 
@@ -71,7 +71,7 @@ class TestS3BigWig:
 class TestS3BigBed:
     @has_aws
     def test_bigbed_search(self):
-        lines = query_file(S3_BIGBED, "chr1:1000000-1300000", include_header=False)
+        lines = file_search(S3_BIGBED, "chr1:1000000-1300000", include_header=False)
         assert isinstance(lines, list)
         assert len(lines) > 0
         # Verify BED coordinate format: chrom, start, end
@@ -86,20 +86,20 @@ class TestS3BigBed:
 class TestAzureVcf:
     @has_azure
     def test_vcf_chr1(self):
-        lines = query_file(AZ_VCF, "chr1:100000000-200000000", include_header=False)
+        lines = file_search(AZ_VCF, "chr1:100000000-200000000", include_header=False)
         assert len(lines) == 112930
 
 
 class TestGcsVcf:
     @has_gcs
     def test_vcf_chr1(self):
-        lines = query_file(GCS_VCF, "chr1:100000000-200000000", include_header=False)
+        lines = file_search(GCS_VCF, "chr1:100000000-200000000", include_header=False)
         assert len(lines) == 112930
 
 
 class TestHttpVcf:
     def test_vcf_chr1(self):
         """HTTP access requires no credentials."""
-        lines = query_file(HTTP_VCF, "chr1:100000000-200000000", include_header=False)
+        lines = file_search(HTTP_VCF, "chr1:100000000-200000000", include_header=False)
         assert len(lines) == 112930
         assert lines[0].startswith("chr1\t100006117\t")
