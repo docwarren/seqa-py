@@ -7,14 +7,7 @@ name = "seqa-py"
 dynamic = ["version"]
 description = "Python library for querying genomic files across cloud and local storage"
 requires-python = ">=3.12"
-dependencies = [
-    "flask>=3.1.3",
-    "flask-cors>=6.0.2",
-]
-
-[project.scripts]
-seqa_py = "seqa_py.cli:main"
-seqa_py_server = "seqa_py.server:main"
+dependencies = []
 
 [tool.maturin]
 features = ["pyo3/extension-module"]

@@ -1,7 +1,3 @@
-from dotenv import load_dotenv
+from ._seqa_py import file_search  # type: ignore[import]
 
-from ._seqa_py import query_file  # type: ignore[import]
-
-load_dotenv()
-
-__all__ = ["query_file"]
+__all__ = ["file_search"]
