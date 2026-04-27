@@ -66,12 +66,15 @@ fn file_search(
             .map_err(|e| e.to_string())?;
 
         let result = rt.block_on(async {
+            let store_service = StoreService::from_uri(&file_path)
+                .map_err(|e| format!("Invalid path {}: {}", file_path, e))?;
+
             match format {
-                OutputFormat::BAM => bam_search(&options).await.map_err(|e| e.to_string()),
-                OutputFormat::FASTA => fasta_search(&options).await.map_err(|e| e.to_string()),
-                OutputFormat::BIGWIG => bigwig_search(&options).await.map_err(|e| e.to_string()),
-                OutputFormat::BIGBED => bigbed_search(&options).await.map_err(|e| e.to_string()),
-                _ => tabix_search(&options).await.map_err(|e| e.to_string()),
+                OutputFormat::BAM => bam_search(&store_service, &options).await.map_err(|e| e.to_string()),
+                OutputFormat::FASTA => fasta_search(&store_service, &options).await.map_err(|e| e.to_string()),
+                OutputFormat::BIGWIG => bigwig_search(&store_service, &options).await.map_err(|e| e.to_string()),
+                OutputFormat::BIGBED => bigbed_search(&store_service, &options).await.map_err(|e| e.to_string()),
+                _ => tabix_search(&store_service, &options).await.map_err(|e| e.to_string()),
             }
         })?;
 
