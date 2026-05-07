@@ -121,3 +121,24 @@ uv run ruff format .            # format
 ```
 
 Tests in `tests/test_cloud.py` are skipped automatically unless the relevant credentials are present in the environment.
+
+---
+
+## Releasing
+
+Releases are published to PyPI by `.github/workflows/publish.yml`, triggered by pushing a `v*` tag. The workflow builds wheels for Linux (x86_64, aarch64), macOS (universal2), and Windows (x86_64), plus an sdist, then uploads via `maturin upload`.
+
+**One-time setup:** a `pypi` GitHub environment with a `PYPI_API_TOKEN` secret.
+
+**To cut a release:**
+
+1. Bump `version` in `Cargo.toml`. The workflow's `check-version` job fails if the tag and `Cargo.toml` version don't match.
+2. Commit the bump.
+3. Tag and push:
+   ```bash
+   git tag vX.Y.Z
+   git push origin main --tags
+   ```
+4. Watch the `Publish to PyPI` workflow in the Actions tab.
+
+Uploads use `--skip-existing`, so re-running on an already-published version is safe.
